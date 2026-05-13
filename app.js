@@ -1,36 +1,42 @@
 let proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
 
+/* ======================
+   SOLO REGISTRO
+====================== */
 const form = document.getElementById("formProyecto");
+
+if(form){
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const p = {
+      id: Date.now(),
+      nombre: nombre.value,
+      integrantes: integrantes.value,
+      especialidad: especialidad.value,
+      categoria: categoria.value,
+      descripcion: descripcion.value,
+      puntaje: Number(puntaje.value),
+      fecha: new Date().toLocaleDateString()
+    };
+
+    if(!p.nombre || !p.integrantes || !p.especialidad || !p.categoria || !p.descripcion || !p.puntaje){
+      alert("Completa todos los campos");
+      return;
+    }
+
+    proyectos.push(p);
+    localStorage.setItem("proyectos", JSON.stringify(proyectos));
+
+    alert("Proyecto guardado");
+    form.reset();
+  });
+}
+
+/* ======================
+   SOLO PROYECTOS
+====================== */
 const tabla = document.getElementById("tabla");
-
-const buscar = document.getElementById("buscar");
-const filtroEsp = document.getElementById("filtroEsp");
-const filtroCat = document.getElementById("filtroCat");
-
-form.addEventListener("submit", e => {
-  e.preventDefault();
-
-  const p = {
-    id: Date.now(),
-    nombre: nombre.value,
-    integrantes: integrantes.value,
-    especialidad: especialidad.value,
-    categoria: categoria.value,
-    descripcion: descripcion.value,
-    puntaje: Number(puntaje.value),
-    fecha: new Date().toLocaleDateString()
-  };
-
-  if(!p.nombre || !p.integrantes || !p.especialidad || !p.categoria || !p.descripcion || !p.puntaje){
-    alert("Completa todos los campos");
-    return;
-  }
-
-  proyectos.push(p);
-  guardar();
-  render();
-  form.reset();
-});
 
 function estado(p){
   if(p>=90) return "excelente";
@@ -39,7 +45,7 @@ function estado(p){
   return "proceso";
 }
 
-function textoEstado(p){
+function texto(p){
   if(p>=90) return "Excelente";
   if(p>=80) return "Muy bueno";
   if(p>=70) return "Bueno";
@@ -47,46 +53,47 @@ function textoEstado(p){
 }
 
 function render(){
+
+  if(!tabla) return;
+
+  const buscar = document.getElementById("buscar")?.value.toLowerCase() || "";
+  const esp = document.getElementById("filtroEsp")?.value.toLowerCase() || "";
+  const cat = document.getElementById("filtroCat")?.value.toLowerCase() || "";
+
   tabla.innerHTML = "";
 
-  const total = proyectos.length;
-  const promedio = total
-    ? (proyectos.reduce((a,b)=>a+b.puntaje,0)/total).toFixed(2)
-    : 0;
+  let total = proyectos.length;
+  let promedio = total ? (proyectos.reduce((a,b)=>a+b.puntaje,0)/total).toFixed(2) : 0;
 
   document.getElementById("total").textContent = total;
   document.getElementById("promedio").textContent = promedio;
 
-  const b = buscar.value.toLowerCase();
-  const e = filtroEsp.value.toLowerCase();
-  const c = filtroCat.value.toLowerCase();
-
   proyectos
-    .filter(p =>
-      p.nombre.toLowerCase().includes(b) &&
-      p.especialidad.toLowerCase().includes(e) &&
-      p.categoria.toLowerCase().includes(c)
-    )
-    .forEach(p => {
-      tabla.innerHTML += `
-        <tr>
-          <td>${p.nombre}</td>
-          <td>${p.especialidad}</td>
-          <td>${p.categoria}</td>
-          <td>${p.puntaje}</td>
-          <td><span class="badge ${estado(p.puntaje)}">${textoEstado(p.puntaje)}</span></td>
-          <td>
-            <button onclick="ver(${p.id})">Ver</button>
-            <button onclick="eliminar(${p.id})">Eliminar</button>
-          </td>
-        </tr>
-      `;
-    });
+  .filter(p =>
+    p.nombre.toLowerCase().includes(buscar) &&
+    p.especialidad.toLowerCase().includes(esp) &&
+    p.categoria.toLowerCase().includes(cat)
+  )
+  .forEach(p => {
+    tabla.innerHTML += `
+      <tr>
+        <td>${p.nombre}</td>
+        <td>${p.especialidad}</td>
+        <td>${p.categoria}</td>
+        <td>${p.puntaje}</td>
+        <td><span class="badge ${estado(p.puntaje)}">${texto(p.puntaje)}</span></td>
+        <td>
+          <button onclick="ver(${p.id})">Ver</button>
+          <button onclick="eliminar(${p.id})">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
 function eliminar(id){
   proyectos = proyectos.filter(p => p.id !== id);
-  guardar();
+  localStorage.setItem("proyectos", JSON.stringify(proyectos));
   render();
 }
 
@@ -110,12 +117,7 @@ function cerrarModal(){
   document.getElementById("modal").style.display = "none";
 }
 
-function guardar(){
-  localStorage.setItem("proyectos", JSON.stringify(proyectos));
-}
-
-buscar.oninput = render;
-filtroEsp.oninput = render;
-filtroCat.oninput = render;
+/* FILTROS */
+document.addEventListener("input", render);
 
 render();
