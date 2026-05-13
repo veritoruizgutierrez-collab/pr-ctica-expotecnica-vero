@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExpoTécnica Digital 2026</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header>
+  <h1>ExpoTécnica Digital 2026</h1>
+</header>
+
+<nav>
+  <a href="#">Inicio</a>
+  <a href="#">Registro</a>
+  <a href="#">Proyectos</a>
+</nav>
+
+<div class="container">
+
+  <!-- FORMULARIO -->
+  <form id="formProyecto">
+    <input type="text" id="nombre" placeholder="Nombre del proyecto">
+    <input type="text" id="integrantes" placeholder="Integrantes">
+    <input type="text" id="especialidad" placeholder="Especialidad">
+    <input type="text" id="categoria" placeholder="Categoría">
+    <textarea id="descripcion" placeholder="Descripción"></textarea>
+    <input type="number" id="puntaje" placeholder="Puntaje (0-100)">
+    <button type="submit">Agregar Proyecto</button>
+  </form>
+
+  <!-- ESTADÍSTICAS Y FILTROS -->
+  <div class="stats">
+    <div class="card">
+      <h3>Total proyectos</h3>
+      <p id="total">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Promedio</h3>
+      <p id="promedio">0</p>
+    </div>
+
+    <input type="text" id="buscar" placeholder="Buscar proyecto...">
+    <input type="text" id="filtroEsp" placeholder="Filtrar especialidad">
+    <input type="text" id="filtroCat" placeholder="Filtrar categoría">
+  </div>
+
+  <!-- TABLA -->
+  <table>
+    <thead>
+      <tr>
+        <th>Proyecto</th>
+        <th>Especialidad</th>
+        <th>Categoría</th>
+        <th>Puntaje</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+  </table>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>Detalles del Proyecto</h2>
+    <p id="detalle"></p>
+    <button onclick="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
